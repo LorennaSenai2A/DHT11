@@ -13,8 +13,10 @@ const char* mqttTopic = "AlunaLoh/lerSensor"; //Topico onde os dados serão publ
 
 //Configuração do DHT22
 #define DHTPIN 15 //Pino onde o sensor DHT22 está conectado
-#define DHTTYPE DHT22 //Tipo sensor
+#define DHTTYPE DHT11 //Tipo sensor
 DHT dht(DHTPIN, DHTTYPE); //Cria objeto 'dht' com o pino e tipo do sensor
+
+const int LED_PIN = 2; //Pino do LED embutido no ESP32 (GPIO2)
 
 //Criação dos objetos de rede e MQTT
 WiFiClient espClient; //Objeto do cliente Wifi
@@ -31,6 +33,7 @@ void setup_wifi() {
     delay(500); Serial.print(".");
   }
   Serial.println("\n✅ WiFi conectado. IP: " + WiFi.localIP().toString());
+  digitalWrite(LED_PIN, HIGH); // Acende o LED para indicar conexão WiFi
 }
 
 // Função para reconectar ao Broker MQTT (Servidor), se desconectado.
@@ -56,6 +59,7 @@ void setup(){
   dht.begin(); //Inicia o sensor DHT22
   setup_wifi(); //Inicia e conecta ao wifi
   client.setServer(mqttServer, mqttPort); //Define o servidor MQTT e porta
+  pinMode(LED_PIN, OUTPUT); //Configura o pino do LED como saída
 }
 
 void loop(){
@@ -73,14 +77,14 @@ float h = dht.readHumidity(); //Lê a umidade
 float t = dht.readTemperature(); //Lê a temperatura
 
 if(isnan(h) || isnan(t)){
-  Serial.println("Erro ao ler Sensor DHT22");
+  Serial.println("Erro ao ler Sensor DHT11");
   return; //Sai da função se houver erro
 }
 
 //Cria um variavel no formato JSON
 String payload = "{";
-payload += "\" temperatura\": " + String(t,1) + ","; //Um dígito decimal
-payload += "\" umidade\": " + String(h,1) + ","; //Um dígito decimal
+payload += "\"temperatura\": " + String(t,1) + ","; //Um dígito decimal
+payload += "\"umidade\": " + String(h,1); //Um dígito decimal
 payload += "}";
 
 Serial.print("Publicado: "); //Mostra o que será enviado
