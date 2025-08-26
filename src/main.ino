@@ -3,8 +3,8 @@
 #include <DHT.h> //Biblioteca para módulo DHT11/DTH22
 
 //Configurações para rede Wifi
-const char* ssid = "Wokwi-GUEST";
-const char* password = "";
+const char* ssid = "Rede";
+const char* password = "123456789";
 
 //Configuração do Broker MQTT
 const char* mqttServer = "broker.hivemq.com"; //Host do Broker MQTT publico
